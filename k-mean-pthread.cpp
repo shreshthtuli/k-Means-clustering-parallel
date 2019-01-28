@@ -12,6 +12,8 @@
 using namespace std;
 
 int numThreads = 4;
+int* sta = new int[numThreads];
+int* sto = new int[numThreads];
 
 struct Point{
     int x; 
@@ -63,12 +65,10 @@ float distance(Point a, Point b){
 
 void* find_clusters(void *tid){
     int *id = (int*) tid;
-    int start = (*id / numThreads) * points.size();
-    int stop = (*id == (numThreads - 1)) ? points.size() : ((*id + 1) / numThreads) * points.size(); 
     float min_dist = INT_MAX;
     int cluster_num = 0;
     float dist;
-    for(int i = start; i < stop; i++){
+    for(int i = sta[*id]; i < sto[*id]; i++){
         min_dist = INT_MAX;
         for(int j = 0; j < means.size(); j++){
             dist = distance(*points[i], *means[j]);
@@ -146,8 +146,11 @@ int main(int argc, char** argv){
 
     pthread_t kcluster_thr[numThreads];
     int* tid = new int[numThreads];
-    for(int i = 0; i < numThreads; i++)
+    for(int i = 0; i < numThreads; i++){
         tid[i] = i;
+        sta[i] = (i / numThreads) * points.size();
+        sto[i] = (i == (numThreads - 1)) ? points.size() : ((i + 1) / numThreads) * points.size(); 
+    }
 
     for(int i = 0; i < 10; i++){
         // cout << "Iteration "  << i << "\n";

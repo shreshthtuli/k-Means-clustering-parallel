@@ -9,7 +9,8 @@
 			"cstring": "cpp",
 			"cmath": "cpp",
 			"iostream": "cpp",
-			"iosfwd": "cpp"
+			"iosfwd": "cpp",
+			"thread": "cpp"
 		}
 	}
 }
