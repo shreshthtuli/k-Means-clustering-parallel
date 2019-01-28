@@ -152,7 +152,7 @@ int main(int argc, char** argv){
 
     pthread_mutex_init(&lock, NULL);
 
-    for(int i = 0; i < 100; i++){
+    for(int i = 0; i < 10; i++){
         // cout << "Iteration "  << i << "\n";
         for(int j = 0; j < numThreads; j++){
             pthread_create(&kcluster_thr[j], NULL, find_clusters, &tid[j]);

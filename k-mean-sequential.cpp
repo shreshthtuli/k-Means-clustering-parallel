@@ -139,7 +139,7 @@ int main(int argc, char** argv){
     double start;
     start = omp_get_wtime();
 
-    for(int i = 0; i < 100; i++){
+    for(int i = 0; i < 10; i++){
         // cout << "Iteration "  << i << "\n";
         find_clusters();
         // print_points();
