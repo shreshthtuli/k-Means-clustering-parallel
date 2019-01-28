@@ -1,7 +1,7 @@
 import random
 
 filename = "points.dat"
-num_points = 100
+num_points = 10000
 
 f = open(filename, "w")
 

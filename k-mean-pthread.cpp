@@ -7,8 +7,12 @@
 #include<cmath>
 #include<sstream>
 #include <omp.h>
+#include <pthread.h>
 
 using namespace std;
+
+pthread_mutex_t lock;
+int numThreads = 4;
 
 struct Point{
     int x; 
@@ -57,18 +61,24 @@ float distance(Point a, Point b){
 }
 
 
-void find_cluster(int j){
+void* find_clusters(void *tid){
+    int *id = (int*) tid;
+    int start = (*id / numThreads) * points.size();
+    int stop = (*id == (numThreads - 1)) ? points.size() : ((*id + 1) / numThreads) * points.size(); 
     float min_dist = INT_MAX;
     int cluster_num = 0;
-    double dist;
-    for(int i = 0; i < means.size(); i++){
-        dist = distance(*points[j], *means[i]);
-        if(min_dist > dist){
-            min_dist = dist;
-            cluster_num = i;
+    float dist;
+    for(int i = start; i < stop; i++){
+        min_dist = INT_MAX;
+        for(int j = 0; j < means.size(); j++){
+            dist = distance(*points[i], *means[j]);
+            if(min_dist > dist){
+                min_dist = dist;
+                cluster_num = i;
+            }
         }
+        points[i]->clusterID = cluster_num;
     }
-    points[j]->clusterID = cluster_num;
 }
 
 
@@ -93,7 +103,7 @@ void update_cluster(int clusterID){
 
 void print_means(){
     for(int i = 0; i < means.size(); i++){
-        cout << "Means " << i << " : (" << means.at(i)->x << ", " << means.at(i)->y << ", " << means.at(i)->z << ")\n";
+        cout << "Means " << i << " : (" << means[i]->x << ", " << means[i]->y << ", " << means[i]->z << ")\n";
     }
     cout << endl;
 }
@@ -108,15 +118,24 @@ void print_points(){
 int main(int argc, char** argv){
     readData("points.dat");
     init_means(10);
-    print_means();
-    
+    // print_means();
     double start;
     start = omp_get_wtime();
 
+    pthread_t kcluster_thr[numThreads];
+    int* tid = new int[numThreads];
+    for(int i = 0; i < numThreads; i++)
+        tid[i] = i;
+
+    pthread_mutex_init(&lock, NULL);
+
     for(int i = 0; i < 100; i++){
         // cout << "Iteration "  << i << "\n";
-        for(int j = 0; j < points.size(); j++){
-            find_cluster(j);
+        for(int j = 0; j < numThreads; j++){
+            pthread_create(&kcluster_thr[j], NULL, find_clusters, &tid[j]);
+        }
+        for(int j = 0; j < numThreads; j++){
+            pthread_join(kcluster_thr[j], NULL);
         }
         // print_points();
         for(int j = 0; j < means.size(); j++){
