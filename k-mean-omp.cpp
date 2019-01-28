@@ -7,11 +7,8 @@
 #include<cmath>
 #include<sstream>
 #include <omp.h>
-#include <pthread.h>
 
 using namespace std;
-
-int numThreads = 4;
 
 struct Point{
     int x; 
@@ -61,17 +58,15 @@ float distance(Point a, Point b){
 }
 
 
-void* find_clusters(void *tid){
-    int *id = (int*) tid;
-    int start = (*id / numThreads) * points.size();
-    int stop = (*id == (numThreads - 1)) ? points.size() : ((*id + 1) / numThreads) * points.size(); 
+void find_clusters(){
     float min_dist = INT_MAX;
     int cluster_num = 0;
     float dist;
-    for(int i = start; i < stop; i++){
-        min_dist = INT_MAX;
+    #pragma omp parallel for
+    for(int i = 0; i < points.size(); i++){
+        float min_dist = INT_MAX; int cluster_num = 0;
         for(int j = 0; j < means.size(); j++){
-            dist = distance(*points[i], *means[j]);
+            float dist = distance(*points[i], *means[j]);
             if(min_dist > dist){
                 min_dist = dist;
                 cluster_num = j;
@@ -85,6 +80,7 @@ void* find_clusters(void *tid){
 void update_cluster(int clusterID){
     float sumx = 0, sumy = 0, sumz = 0;
     int num = 0;
+    // #pragma omp parallel for
     for(int i = 0; i < points.size(); i++){
         if(points[i]->clusterID == clusterID){
             sumx += points[i]->x;
@@ -110,7 +106,7 @@ void print_means(){
 
 void print_points(){
     for(int i = 0; i < points.size(); i++){
-        cout << "Point " << i << " : (" << points.at(i)->x << ", " << points.at(i)->y << ", " << points.at(i)->z << ") -> " << points[i]->clusterID << endl;
+        cout << "Point " << i << " : (" << points.at(i)->x << ", " << points[i]->y << ", " << points[i]->z << ") -> " << points[i]->clusterID << endl;
     }
     cout << endl;
 }
@@ -141,22 +137,13 @@ int main(int argc, char** argv){
     readData("points.dat");
     init_means(5);
     // print_means();
+    
     double start;
     start = omp_get_wtime();
 
-    pthread_t kcluster_thr[numThreads];
-    int* tid = new int[numThreads];
-    for(int i = 0; i < numThreads; i++)
-        tid[i] = i;
-
     for(int i = 0; i < 10; i++){
         // cout << "Iteration "  << i << "\n";
-        for(int j = 0; j < numThreads; j++){
-            pthread_create(&kcluster_thr[j], NULL, find_clusters, &tid[j]);
-        }
-        for(int j = 0; j < numThreads; j++){
-            pthread_join(kcluster_thr[j], NULL);
-        }
+        find_clusters();
         // print_points();
         for(int j = 0; j < means.size(); j++){
             update_cluster(j);
