@@ -49,9 +49,9 @@ void readData(string filename){
 void init_means(int num){
     for(int i = 0; i < num; i++){
         Point* p = new Point;
-        p->x = min_val + (float(i)/num)*(max_val - min_val);
-        p->y = min_val + (float(i)/num)*(max_val - min_val);
-        p->z = min_val + (float(i)/num)*(max_val - min_val);
+        p->x = points.at((float(i)/num)*points.size())->x;
+        p->y = points.at((float(i)/num)*points.size())->y;
+        p->z = points.at((float(i)/num)*points.size())->z;
         // cout << p->x << " " <<  p->y << " " <<  p->z << endl;
         means.push_back(p);
     }
@@ -75,7 +75,7 @@ void* find_clusters(void *tid){
             dist = distance(*points[i], *means[j]);
             if(min_dist > dist){
                 min_dist = dist;
-                cluster_num = i;
+                cluster_num = j;
             }
         }
         points[i]->clusterID = cluster_num;
@@ -104,21 +104,43 @@ void update_cluster(int clusterID){
 
 void print_means(){
     for(int i = 0; i < means.size(); i++){
-        cout << "Means " << i << " : (" << means[i]->x << ", " << means[i]->y << ", " << means[i]->z << ")\n";
+        cout << "Means " << i << " : (" << means.at(i)->x << ", " << means.at(i)->y << ", " << means.at(i)->z << ")\n";
     }
     cout << endl;
 }
 
 void print_points(){
     for(int i = 0; i < points.size(); i++){
-        cout << "Point " << i << " : (" << points.at(i)->x << ", " << points[i]->y << ", " << points[i]->z << ") -> " << points[i]->clusterID << endl;
+        cout << "Point " << i << " : (" << points.at(i)->x << ", " << points.at(i)->y << ", " << points.at(i)->z << ") -> " << points[i]->clusterID << endl;
     }
     cout << endl;
 }
 
+void performance(){
+    double perf = 0;
+    vector<int> indices;
+    for(int i = 0; i < means.size(); i++){
+        indices.clear();
+        // Get all points of cluster i
+        for(int j = 0; j < points.size(); j++){
+            if(points.at(j)->clusterID == i)
+                indices.push_back(j);
+        }
+        // Find sum of distances for all possible y
+        double sum = 0;
+        for(int x = 0; x < indices.size(); x++){
+            for(int y = x+1; y < indices.size(); y++){
+                sum += distance(*points[x], *points[y]);
+            }
+        }
+        perf += (sum / (2 * indices.size()));
+    }
+    cout << "Performance : " << perf << endl;
+}
+
 int main(int argc, char** argv){
     readData("points.dat");
-    init_means(10);
+    init_means(5);
     // print_means();
     double start;
     start = omp_get_wtime();
@@ -147,5 +169,7 @@ int main(int argc, char** argv){
 
     cout << "Time : " << (omp_get_wtime() - start) << endl;
     print_means();
+    // print_points();
+    performance();
     return 0;
 }
