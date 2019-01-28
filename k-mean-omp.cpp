@@ -54,6 +54,7 @@ void init_means(int num){
 }
 
 float distance(Point a, Point b){
+    // Parallelising this is a bad idea
     return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2)); 
 }
 
@@ -62,7 +63,7 @@ void find_clusters(){
     float min_dist = INT_MAX;
     int cluster_num = 0;
     float dist;
-    #pragma omp parallel for
+    #pragma omp parallel for private(min_dist, cluster_num)
     for(int i = 0; i < points.size(); i++){
         float min_dist = INT_MAX; int cluster_num = 0;
         for(int j = 0; j < means.size(); j++){
@@ -80,7 +81,6 @@ void find_clusters(){
 void update_cluster(int clusterID){
     float sumx = 0, sumy = 0, sumz = 0;
     int num = 0;
-    // #pragma omp parallel for
     for(int i = 0; i < points.size(); i++){
         if(points[i]->clusterID == clusterID){
             sumx += points[i]->x;
@@ -114,6 +114,7 @@ void print_points(){
 void performance(){
     double perf = 0;
     vector<int> indices;
+    #pragma omp parallel for private(indices) shared(perf)
     for(int i = 0; i < means.size(); i++){
         indices.clear();
         // Get all points of cluster i
@@ -145,6 +146,7 @@ int main(int argc, char** argv){
         // cout << "Iteration "  << i << "\n";
         find_clusters();
         // print_points();
+        #pragma omp parallel for
         for(int j = 0; j < means.size(); j++){
             update_cluster(j);
         }
