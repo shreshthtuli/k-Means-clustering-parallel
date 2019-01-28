@@ -7,7 +7,9 @@
 	"settings": {
 		"files.associations": {
 			"cstring": "cpp",
-			"cmath": "cpp"
+			"cmath": "cpp",
+			"iostream": "cpp",
+			"iosfwd": "cpp"
 		}
 	}
 }

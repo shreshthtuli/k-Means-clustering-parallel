@@ -5,6 +5,7 @@
 #include<climits>
 #include<algorithm>
 #include<cmath>
+#include<sstream>
 
 using namespace std;
 
@@ -21,28 +22,32 @@ vector<Point*> means;
 int max_val = INT_MIN, min_val = INT_MAX;
 
 void readData(string filename){
-    ifstream file;
+    ifstream file(filename);
     string line;
-    file.open(filename);
-    int x, y, z;
-    while(file >> x >> y >> z){
-        Point p;
-        p.x = x;
-        p.y = y;
-        p.z = z;
-        max_val = max({max_val, x, y, z});
-        min_val = min({min_val, x, y, z});
-        points.push_back(&p);
+    int x, y, z; istringstream ss;
+    while(getline(file, line)){
+        cout << line;
+        Point* p = new Point;
+        istringstream ss(line);
+        ss >> p->x;
+        ss >> p->y;
+        ss >> p->z;
+        // cout << p->x << " " <<  p->y << " " <<  p->z << endl;
+        p->clusterID = 0;
+        max_val = max({max_val, p->x, p->y, p->z});
+        min_val = min({min_val, p->x, p->y, p->z});
+        points.push_back(p);
     }
+    file.close();
 }
 
 void init_means(int num){
     for(int i = 0; i < num; i++){
-        Point p;
-        p.x = min_val + rand()%(max_val - min_val);
-        p.y = min_val + rand()%(max_val - min_val);
-        p.z = min_val + rand()%(max_val - min_val);
-        means.push_back(&p);
+        Point* p = new Point;
+        p->x = min_val + rand()%(max_val - min_val);
+        p->y = min_val + rand()%(max_val - min_val);
+        p->z = min_val + rand()%(max_val - min_val);
+        means.push_back(p);
     }
 }
 
@@ -51,18 +56,18 @@ float distance(Point a, Point b){
 }
 
 
-void find_cluster(Point p){
+void find_cluster(int j){
     float min_dist = INT_MAX;
     int cluster_num = 0;
     double dist;
     for(int i = 0; i < means.size(); i++){
-        dist = distance(p, *means[i]);
+        dist = distance(*points[j], *means[i]);
         if(min_dist > dist){
             min_dist = dist;
             cluster_num = i;
         }
     }
-    p.clusterID = cluster_num;
+    points[j]->clusterID = cluster_num;
 }
 
 
@@ -76,6 +81,9 @@ void update_cluster(int clusterID){
             sumz += points[i]->z;
             num++; 
         }
+    }
+    if(num == 0){
+        return;
     }
     means[clusterID]->x = sumx / num;
     means[clusterID]->y = sumy / num;
@@ -91,26 +99,26 @@ void print_means(){
 
 void print_points(){
     for(int i = 0; i < points.size(); i++){
-        cout << "Point " << i << " : (" << points[i]->x << ", " << points[i]->y << ", " << points[i]->z << ") -> " << points[i]->clusterID << endl;
+        cout << "Point " << i << " : (" << points.at(i)->x << ", " << points[i]->y << ", " << points[i]->z << ") -> " << points[i]->clusterID << endl;
     }
     cout << endl;
 }
 
 int main(int argc, char** argv){
     readData("points.dat");
-    print_points();
-    exit(0);
     init_means(5);
+    print_means();
 
     for(int i = 0; i < 100; i++){
         cout << "Iteration "  << i << "\n";
         for(int j = 0; j < points.size(); j++){
-            find_cluster(*points[j]);
+            find_cluster(j);
         }
+        // print_points();
         for(int j = 0; j < means.size(); j++){
             update_cluster(j);
         }
-        print_points();
+        print_means();
     }
     return 0;
 }
