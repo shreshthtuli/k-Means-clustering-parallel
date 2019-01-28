@@ -45,9 +45,10 @@ void readData(string filename){
 void init_means(int num){
     for(int i = 0; i < num; i++){
         Point* p = new Point;
-        p->x = min_val + (i/num)*(max_val - min_val);
-        p->y = min_val + (i/num)*(max_val - min_val);
-        p->z = min_val + (i/num)*(max_val - min_val);
+        p->x = min_val + (float(i)/num)*(max_val - min_val);
+        p->y = min_val + (float(i)/num)*(max_val - min_val);
+        p->z = min_val + (float(i)/num)*(max_val - min_val);
+        // cout << p->x << " " <<  p->y << " " <<  p->z << endl;
         means.push_back(p);
     }
 }
@@ -108,7 +109,7 @@ void print_points(){
 int main(int argc, char** argv){
     readData("points.dat");
     init_means(10);
-    print_means();
+    // print_means();
     
     double start;
     start = omp_get_wtime();

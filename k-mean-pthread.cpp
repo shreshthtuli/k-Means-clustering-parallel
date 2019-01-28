@@ -49,9 +49,10 @@ void readData(string filename){
 void init_means(int num){
     for(int i = 0; i < num; i++){
         Point* p = new Point;
-        p->x = min_val + (i/num)*(max_val - min_val);
-        p->y = min_val + (i/num)*(max_val - min_val);
-        p->z = min_val + (i/num)*(max_val - min_val);
+        p->x = min_val + (float(i)/num)*(max_val - min_val);
+        p->y = min_val + (float(i)/num)*(max_val - min_val);
+        p->z = min_val + (float(i)/num)*(max_val - min_val);
+        // cout << p->x << " " <<  p->y << " " <<  p->z << endl;
         means.push_back(p);
     }
 }
