@@ -43,11 +43,13 @@ void readData(string filename){
 }
 
 void init_means(int num){
+    int index;
     for(int i = 0; i < num; i++){
         Point* p = new Point;
-        p->x = points.at((float(i)/num)*points.size())->x;
-        p->y = points.at((float(i)/num)*points.size())->y;
-        p->z = points.at((float(i)/num)*points.size())->z;
+        index = rand()%points.size();
+        p->x = points.at(index)->x;
+        p->y = points.at(index)->y;
+        p->z = points.at(index)->z;
         // cout << p->x << " " <<  p->y << " " <<  p->z << endl;
         means.push_back(p);
     }
@@ -141,7 +143,7 @@ int main(int argc, char** argv){
     double start;
     start = omp_get_wtime();
 
-    for(int i = 0; i < 10; i++){
+    for(int i = 0; i < 50; i++){
         // cout << "Iteration "  << i << "\n";
         find_clusters();
         // print_points();
