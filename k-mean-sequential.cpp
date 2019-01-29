@@ -114,7 +114,6 @@ void print_points(){
 void performance(){
     double perf = 0;
     vector<int> indices;
-    #pragma omp parallel for firstprivate(indices) shared(perf)
     for(int i = 0; i < means.size(); i++){
         indices.clear();
         // Get all points of cluster i
@@ -136,7 +135,7 @@ void performance(){
 
 int main(int argc, char** argv){
     readData("points.dat");
-    init_means(20);
+    init_means(atoi(argv[1]));
     // print_means();
     
     double start;
@@ -152,9 +151,9 @@ int main(int argc, char** argv){
         // print_means();
     }
 
-    cout << "Time : " << (omp_get_wtime() - start) << endl;
-    print_means();
+    cout << (omp_get_wtime() - start) << endl;
+    // print_means();
     // print_points();
-    performance();
+    // performance();
     return 0;
 }

@@ -180,7 +180,7 @@ void performance(){
 
 int main(int argc, char** argv){
     readData("points.dat");
-    init_means(20);
+    init_means(atoi(argv[1]));
     // print_means();
     double start;
     start = omp_get_wtime();
@@ -236,9 +236,9 @@ int main(int argc, char** argv){
         pthread_cancel(kcluster_thr[j]);
     }
 
-    cout << "Time : " << (omp_get_wtime() - start) << endl;
-    print_means();
+    cout << (omp_get_wtime() - start) << endl;
+    // print_means();
     // print_points();
-    performance();
+    // performance();
     return 0;
 }

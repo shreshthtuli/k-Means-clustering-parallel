@@ -137,7 +137,7 @@ void performance(){
 
 int main(int argc, char** argv){
     readData("points.dat");
-    init_means(20);
+    init_means(atoi(argv[1]));
     // print_means();
     
     double start;
@@ -154,9 +154,9 @@ int main(int argc, char** argv){
         // print_means();
     }
 
-    cout << "Time : " << (omp_get_wtime() - start) << endl;
-    print_means();
+    cout << (omp_get_wtime() - start) << endl;
+    // print_means();
     // print_points();
-    performance();
+    // performance();
     return 0;
 }
