@@ -14,12 +14,12 @@ if clustered == 0:
         f.write(str(random.randint(0, 100))+" "+str(random.randint(0, 100))+" "+str(random.randint(0, 100))+"\n")
 else:
     for i in range(k):
-        x = random.randint(0, 100)
-        y = random.randint(0, 100)
-        z = random.randint(0, 100)
+        x = random.randint(0, 500)
+        y = random.randint(0, 500)
+        z = random.randint(0, 500)
         # print x, y, z
         for j in range(num_points / k):
-            f.write(str(x+random.randint(-20, 20))+" "+str(y+random.randint(-20, 20))+" "+str(z+random.randint(-20, 20))+"\n")
+            f.write(str(x+random.randint(-50, 50))+" "+str(y+random.randint(-50, 50))+" "+str(z+random.randint(-50, 50))+"\n")
 
 
 f.close()

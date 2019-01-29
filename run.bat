@@ -8,7 +8,7 @@ g++ -fopenmp ./k-mean-pthread2.cpp -o pthread2
 g++ -fopenmp ./k-mean-omp.cpp -o omp
 
 
-FOR %%K IN (5,10,20,50) DO (
+FOR %%K IN (5, 10, 20, 50, 100) DO (
     echo. > results/%%K.txt
     FOR /L %%N IN (1000, 1000, 10000) DO (
         python ./data-gen.py %%K %%N

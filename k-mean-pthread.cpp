@@ -11,6 +11,9 @@
 #include <iomanip>
 
 using namespace std;
+pthread_mutex_t lock;
+
+int cacheSize = 4;
 
 int numThreads = 4;
 int* sta = new int[numThreads];
@@ -82,6 +85,7 @@ void* find_clusters(void *tid){
                     cluster_num = j;
                 }
             }
+            
             points[i]->clusterID = cluster_num;
         }
         work_done[*id] = 1;
@@ -160,6 +164,9 @@ int main(int argc, char** argv){
     output.open(ss1.str(), ios::app);
 
     numThreads = atoi(argv[3]);
+    sta = new int[numThreads];
+    sto = new int[numThreads];
+    work_done = new int[numThreads];
     double start;
     start = omp_get_wtime();
 
@@ -173,13 +180,14 @@ int main(int argc, char** argv){
         pthread_create(&kcluster_thr[i], NULL, find_clusters, &tid[i]);
     }
 
-    bool all_done = true;
+    bool all_done = false;
 
     for(int i = 0; i < 100; i++){
         // cout << "Iteration "  << i << "\n";
         // print_points();
 
         // Wait till all thread finish fniding clusters
+        all_done = false;
         while(!all_done){
             all_done = true;
             for(int j = 0; j < numThreads; j++){
@@ -195,7 +203,7 @@ int main(int argc, char** argv){
         }
         // print_means();
 
-        if(i == 60){
+        if(i == 50){
             break;
         }
         // Tell threads to work again
@@ -212,9 +220,12 @@ int main(int argc, char** argv){
 
     output << std::fixed << std::setprecision(8) << omp_get_wtime() - start;
     output << endl;
+
+    cout << std::fixed << std::setprecision(8) << omp_get_wtime() - start << endl;
+
     // print_means();
     // print_points();
-    // performance();
+    performance();
     output.close();
     return 0;
 }

@@ -162,9 +162,12 @@ int main(int argc, char** argv){
 
     output << std::fixed << std::setprecision(8) << omp_get_wtime() - start;
     output << endl;
+
+    cout << std::fixed << std::setprecision(8) << omp_get_wtime() - start << endl;
+
     // print_means();
     // print_points();
-    // performance();
+    performance();
     output.close();
     return 0;
 }
