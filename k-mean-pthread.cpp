@@ -14,6 +14,7 @@ using namespace std;
 int numThreads = 4;
 int* sta = new int[numThreads];
 int* sto = new int[numThreads];
+int* work_done = new int[numThreads];
 
 struct Point{
     int x; 
@@ -58,26 +59,30 @@ void init_means(int num){
     }
 }
 
-float distance(Point a, Point b){
-    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2)); 
+float distance(Point* a, Point* b){
+    return sqrt(pow(a->x - b->x, 2) + pow(a->y - b->y, 2) + pow(a->z - b->z, 2)); 
 }
 
 
 void* find_clusters(void *tid){
     int *id = (int*) tid;
-    float min_dist = INT_MAX;
-    int cluster_num = 0;
-    float dist;
-    for(int i = sta[*id]; i < sto[*id]; i++){
-        min_dist = INT_MAX;
-        for(int j = 0; j < means.size(); j++){
-            dist = distance(*points[i], *means[j]);
-            if(min_dist > dist){
-                min_dist = dist;
-                cluster_num = j;
+    while(work_done[*id] < 2){
+        float min_dist = INT_MAX;
+        int cluster_num = 0;
+        float dist;
+        for(int i = sta[*id]; i < sto[*id]; i++){
+            min_dist = INT_MAX;
+            for(int j = 0; j < means.size(); j++){
+                dist = distance(points[i], means[j]);
+                if(min_dist > dist){
+                    min_dist = dist;
+                    cluster_num = j;
+                }
             }
+            points[i]->clusterID = cluster_num;
         }
-        points[i]->clusterID = cluster_num;
+        work_done[*id] = 1;
+        while(work_done[*id] == 1){}
     }
 }
 
@@ -129,7 +134,7 @@ void performance(){
         double sum = 0;
         for(int x = 0; x < indices.size(); x++){
             for(int y = x+1; y < indices.size(); y++){
-                sum += distance(*points[x], *points[y]);
+                sum += distance(points[x], points[y]);
             }
         }
         perf += (sum / (2 * indices.size()));
@@ -148,23 +153,46 @@ int main(int argc, char** argv){
     int* tid = new int[numThreads];
     for(int i = 0; i < numThreads; i++){
         tid[i] = i;
-        sta[i] = (i / numThreads) * points.size();
-        sto[i] = (i == (numThreads - 1)) ? points.size() : ((i + 1) / numThreads) * points.size(); 
+        sta[i] = (float(i) / numThreads) * points.size();
+        sto[i] = (i == (numThreads - 1)) ? points.size() : (float(i + 1) / numThreads) * points.size(); 
+        work_done[i] = 0;
+        pthread_create(&kcluster_thr[i], NULL, find_clusters, &tid[i]);
     }
 
-    for(int i = 0; i < 10; i++){
+    bool all_done = true;
+
+    for(int i = 0; i < 100; i++){
         // cout << "Iteration "  << i << "\n";
-        for(int j = 0; j < numThreads; j++){
-            pthread_create(&kcluster_thr[j], NULL, find_clusters, &tid[j]);
-        }
-        for(int j = 0; j < numThreads; j++){
-            pthread_join(kcluster_thr[j], NULL);
-        }
         // print_points();
+
+        // Wait till all thread finish fniding clusters
+        while(!all_done){
+            all_done = true;
+            for(int j = 0; j < numThreads; j++){
+                if(work_done[j] != 1)
+                    break;
+            }
+        }
+
+        // Update means
         for(int j = 0; j < means.size(); j++){
             update_cluster(j);
         }
         // print_means();
+
+        if(i == 10){
+            break;
+        }
+        // Tell threads to work again
+        for(int j = 0; j < numThreads; j++){
+            work_done[j] = 0;
+        }
+    }
+
+    // Tell all threads to stop
+    for(int j = 0; j < numThreads; j++){
+        work_done[j] = 2;
+        pthread_cancel(kcluster_thr[j]);
     }
 
     cout << "Time : " << (omp_get_wtime() - start) << endl;

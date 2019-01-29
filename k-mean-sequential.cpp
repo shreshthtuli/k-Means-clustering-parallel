@@ -53,8 +53,8 @@ void init_means(int num){
     }
 }
 
-float distance(Point a, Point b){
-    return sqrt(pow(a.x - b.x, 2) + pow(a.y - b.y, 2) + pow(a.z - b.z, 2)); 
+float distance(Point* a, Point* b){
+    return sqrt(pow(a->x - b->x, 2) + pow(a->y - b->y, 2) + pow(a->z - b->z, 2)); 
 }
 
 
@@ -65,7 +65,7 @@ void find_clusters(){
     for(int i = 0; i < points.size(); i++){
         min_dist = INT_MAX;
         for(int j = 0; j < means.size(); j++){
-            dist = distance(*points[i], *means[j]);
+            dist = distance(points[i], means[j]);
             if(min_dist > dist){
                 min_dist = dist;
                 cluster_num = j;
@@ -123,7 +123,7 @@ void performance(){
         double sum = 0;
         for(int x = 0; x < indices.size(); x++){
             for(int y = x+1; y < indices.size(); y++){
-                sum += distance(*points[x], *points[y]);
+                sum += distance(points[x], points[y]);
             }
         }
         perf += (sum / (2 * indices.size()));
