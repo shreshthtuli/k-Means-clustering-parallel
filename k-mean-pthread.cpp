@@ -225,7 +225,7 @@ int main(int argc, char** argv){
 
     // print_means();
     // print_points();
-    performance();
+    // performance();
     output.close();
     return 0;
 }

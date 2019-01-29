@@ -21,7 +21,7 @@ int* sto = new int[numThreads];
 int* work_done = new int[numThreads];
 int* sta2 = new int[numThreads];
 int* sto2 = new int[numThreads];
-int* work_done2 = new int[numThreads];
+int* work_done2 = new int[numThreads*cacheSize];
 
 struct Point{
     int x; 
@@ -101,7 +101,7 @@ void* update_cluster(void * tid){
     int *id = (int*) tid;
     float sumx = 0, sumy = 0, sumz = 0;
     int num = 0;
-    while(work_done2[*id] < 2){
+    while(work_done2[*id*cacheSize] < 2){
         for(int clusterID = sta2[*id]; clusterID < sto2[*id]; clusterID++){
             for(int i = 0; i < points.size(); i++){
                 if(points[i]->clusterID == clusterID){
@@ -118,8 +118,8 @@ void* update_cluster(void * tid){
             means[clusterID]->y = sumy / num;
             means[clusterID]->z = sumz / num;
         }
-        work_done2[*id] = 1;
-        while(work_done2[*id] == 1){}
+        work_done2[*id*cacheSize] = 1;
+        while(work_done2[*id*cacheSize] == 1){}
     }
     return NULL;
 }
@@ -180,7 +180,7 @@ int main(int argc, char** argv){
     work_done = new int[numThreads];
     sta2 = new int[numThreads];
     sto2 = new int[numThreads];
-    work_done2 = new int[numThreads];
+    work_done2 = new int[numThreads*cacheSize];
     double start;
     start = omp_get_wtime();
 
@@ -194,7 +194,7 @@ int main(int argc, char** argv){
         work_done[i] = 0;
         sta2[i] = (float(i) / numThreads) * means.size();
         sto2[i] = (i == (numThreads - 1)) ? means.size() : (float(i + 1) / numThreads) * means.size(); 
-        work_done2[i] = 0;
+        work_done2[i*cacheSize] = 0;
         pthread_create(&kcluster_thr[i], NULL, find_clusters, &tid[i]);
         pthread_create(&kmean_thr[i], NULL, update_cluster, &tid[i]);
     }
@@ -205,7 +205,7 @@ int main(int argc, char** argv){
         // cout << "Iteration "  << i << "\n";
         // print_points();
 
-        // Wait till all thread finish fniding clusters
+        // Wait till all thread finish finding clusters
         all_done = false;
         while(!all_done){
             all_done = true;
@@ -218,7 +218,7 @@ int main(int argc, char** argv){
 
         // Tell means threads to work again
         for(int j = 0; j < numThreads; j++){
-            work_done2[j] = 0;
+            work_done2[j*cacheSize] = 0;
         }
         // print_means();
 
@@ -227,7 +227,7 @@ int main(int argc, char** argv){
         while(!all_done){
             all_done = true;
             for(int j = 0; j < numThreads; j++){
-                if(work_done2[j] != 1){
+                if(work_done2[j*cacheSize] != 1){
                     all_done = false; break;
                 }
             }
@@ -255,7 +255,7 @@ int main(int argc, char** argv){
 
     // print_means();
     // print_points();
-    performance();
+    // performance();
     output.close();
     return 0;
 }
