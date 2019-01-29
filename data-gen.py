@@ -1,9 +1,10 @@
 import random
 from sys import argv
 
-filename = "points.dat"
 num_points = int(argv[2])
 k = int(argv[1])
+filename = "./data/"+str(k)+"-"+str(num_points)+".dat"
+
 clustered = 1
 
 f = open(filename, "w")

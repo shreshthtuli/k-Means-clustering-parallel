@@ -7,6 +7,7 @@
 #include<cmath>
 #include<sstream>
 #include <omp.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -134,9 +135,17 @@ void performance(){
 }
 
 int main(int argc, char** argv){
-    readData("points.dat");
-    init_means(atoi(argv[1]));
+    int k = atoi(argv[1]);
+    int n = atoi(argv[2]);
+    stringstream ss;
+    ss << "./data/" << k << "-" << n << ".dat"; 
+    readData(ss.str());
+    init_means(k);
     // print_means();
+    stringstream ss1;
+    ss1 << ".\\results\\" << k << ".txt";
+    ofstream output;
+    output.open(ss1.str(), ios::app);
     
     double start;
     start = omp_get_wtime();
@@ -151,9 +160,11 @@ int main(int argc, char** argv){
         // print_means();
     }
 
-    cout << (omp_get_wtime() - start) << endl;
+    output << std::fixed << std::setprecision(8) << omp_get_wtime() - start;
+    output << endl;
     // print_means();
     // print_points();
     // performance();
+    output.close();
     return 0;
 }
