@@ -11,10 +11,13 @@
 
 using namespace std;
 
+pthread_mutex_t lock;
+
 int numThreads = 4;
 int* sta = new int[numThreads];
 int* sto = new int[numThreads];
 int* work_done = new int[numThreads];
+int* work_done2 = new int[numThreads];
 
 struct Point{
     int x; 
@@ -88,16 +91,46 @@ void* find_clusters(void *tid){
     }
 }
 
+// global sums and num
+float sumx = 0, sumy = 0, sumz = 0;
+int num = 0;
+int cid;
+
+void* update_cluster_helper(void* tid){
+    int *id = (int*) tid;
+    while(work_done2[*id] < 2){
+        float sx = 0, sy = 0, sz = 0;
+        int n = 0;
+        for(int i = sta[*id]; i < sto[*id]; i++){
+            if(points[i]->clusterID == cid){
+                sx += points[i]->x;
+                sy += points[i]->y;
+                sz += points[i]->z;
+                n++; 
+            }
+        }
+        pthread_mutex_lock(&lock);
+        sumx += sx; sumy += sy; sumz += sz; num += n;
+        pthread_mutex_unlock(&lock);
+        work_done2[*id] = 1;
+        while(work_done2[*id] == 1){}
+    }
+    return NULL;
+}
 
 void update_cluster(int clusterID){
     float sumx = 0, sumy = 0, sumz = 0;
-    int num = 0;
-    for(int i = 0; i < points.size(); i++){
-        if(points[i]->clusterID == clusterID){
-            sumx += points[i]->x;
-            sumy += points[i]->y;
-            sumz += points[i]->z;
-            num++; 
+    int num = 0; bool all_done = true;
+    cid = clusterID;
+    for(int j = 0; j < numThreads; j++){
+        work_done2[j] = 0;
+    }
+    while(!all_done){
+        all_done = true;
+        for(int j = 0; j < numThreads; j++){
+            if(work_done2[j] != 1){
+                all_done = false; break;
+            }
         }
     }
     if(num == 0){
@@ -152,7 +185,10 @@ int main(int argc, char** argv){
     double start;
     start = omp_get_wtime();
 
+    pthread_mutex_init(&lock, NULL);
+
     pthread_t kcluster_thr[numThreads];
+    pthread_t kmean_thr[numThreads];
     int* tid = new int[numThreads];
     for(int i = 0; i < numThreads; i++){
         tid[i] = i;
@@ -160,6 +196,7 @@ int main(int argc, char** argv){
         sto[i] = (i == (numThreads - 1)) ? points.size() : (float(i + 1) / numThreads) * points.size(); 
         work_done[i] = 0;
         pthread_create(&kcluster_thr[i], NULL, find_clusters, &tid[i]);
+        pthread_create(&kmean_thr[i], NULL, update_cluster_helper, &tid[i]);
     }
 
     bool all_done = true;
@@ -168,7 +205,7 @@ int main(int argc, char** argv){
         // cout << "Iteration "  << i << "\n";
         // print_points();
 
-        // Wait till all thread finish fniding clusters
+        // Wait till all thread finish finding clusters
         while(!all_done){
             all_done = true;
             for(int j = 0; j < numThreads; j++){
@@ -184,7 +221,7 @@ int main(int argc, char** argv){
         }
         // print_means();
 
-        if(i == 60){
+        if(i == 50){
             break;
         }
         // Tell threads to work again

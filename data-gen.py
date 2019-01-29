@@ -1,8 +1,8 @@
 import random
 
 filename = "points.dat"
-num_points = 1000
-k = 5
+num_points = 10000
+k = 20
 clustered = 1
 
 f = open(filename, "w")

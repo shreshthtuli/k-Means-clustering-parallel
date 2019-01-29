@@ -137,7 +137,7 @@ void performance(){
 
 int main(int argc, char** argv){
     readData("points.dat");
-    init_means(5);
+    init_means(20);
     // print_means();
     
     double start;
