@@ -138,7 +138,7 @@ int main(int argc, char** argv){
     int k = atoi(argv[1]);
     int n = atoi(argv[2]);
     stringstream ss;
-    ss << "./data/" << k << "-" << n << ".dat"; 
+    ss << "../data/" << k << "-" << n << ".dat"; 
     readData(ss.str());
     init_means(k);
     // print_means();

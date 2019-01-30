@@ -10,7 +10,7 @@ g++ -fopenmp ./k-mean-omp.cpp -o omp
 
 
 FOR %%K IN (5, 10, 20, 50, 100) DO (
-    echo. > results/%%K.txt
+    echo. > ../results/%%K.txt
     FOR /L %%N IN (1000, 1000, 10000) DO (
         python ./data-gen.py %%K %%N
     )
