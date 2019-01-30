@@ -125,7 +125,7 @@ void kmeans_sequential(int N, int K, int* data_points, int** data_point_cluster,
         }
         iterations++;
     }
-
+    // performance();
     *centroids = all_means.data();
     *data_point_cluster = points;
     *num_iterations = iterations-1;
