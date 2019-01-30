@@ -8,19 +8,13 @@
 #include<sstream>
 #include <omp.h>
 #include <iomanip>
+#include "lab1_sequential.h"
 
 using namespace std;
 
-struct Point{
-    int x; 
-    int y; 
-    int z;
-    int clusterID;
-};
-
 int* points;
-int* means;
-int* all_means;
+vector<int> means;
+vector<int> all_means;
 int points_size;
 int means_size;
 
@@ -38,9 +32,10 @@ void init_means(int num){
     int index;
     for(int i = 0; i < num; i++){
         index = rand()%points_size;
-        means[3*i] = points[4*index];
-        means[3*i+1] = points[4*index+1];
-        means[3*i+2] = points[4*index+2];
+        means.push_back(points[4*index]);
+        means.push_back(points[4*index+1]);
+        means.push_back(points[4*index+2]);
+        // cout << means[3*i] << " " << means[3*i+1] << " " << means[3*i+2] << endl;
     }
 }
 
@@ -69,7 +64,7 @@ void find_clusters(){
 
 bool update_cluster(int clusterID){
     float sumx = 0, sumy = 0, sumz = 0;
-    int num = 0;
+    int num = 0; bool val;
     for(int i = 0; i < points_size; i++){
         if(points[4*i+3] == clusterID){
             sumx += points[4*i];
@@ -81,10 +76,11 @@ bool update_cluster(int clusterID){
     if(num == 0){
         return true;
     }
+    val = (means[4*clusterID] == int(sumx/num)) && (means[4*clusterID+1] == int(sumy/num)) && (means[4*clusterID+2] == int(sumz/num));
     means[4*clusterID] = sumx / num;
     means[4*clusterID+1] = sumy / num;
     means[4*clusterID+2] = sumz / num;
-    return (sumx == 0 && sumy == 0 && sumz == 0);
+    return val;
 }
 
 void performance(){
@@ -112,20 +108,25 @@ void performance(){
 void kmeans_sequential(int N, int K, int* data_points, int** data_point_cluster, int** centroids, int* num_iterations){
     
     points = new int[N*4];
-    means = new int[K*3];
     points_size = N;
     means_size = K;
     
-    readData(data_points, N);
-    init_means(K);
+    readData(data_points, points_size);
+    init_means(means_size);
 
     int iterations = 0;
     bool complete = false;
-    while(!complete){
+    while(!complete && iterations < N){
         find_clusters();
         complete = true;
-        for(int j = 0; j < K; j++)
+        all_means.insert(std::end(all_means), means.begin(), means.end());
+        for(int j = 0; j < means_size; j++){
             complete = complete && update_cluster(j);
+        }
         iterations++;
     }
+
+    *centroids = all_means.data();
+    *data_point_cluster = points;
+    *num_iterations = iterations-1;
 }
