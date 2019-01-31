@@ -1,0 +1,16 @@
+ 
+Performance : 3.93985e+07
+Time Taken: 0.028000 
+ 
+Performance : 3.93985e+07
+Time Taken: 0.011000 
+ 
+Performance : 3.93985e+07
+Time Taken: 0.012000 
+ 
+Performance : 3.94012e+07
+Time Taken: 0.007000 
+ 
+Performance : 3.97341e+07
+Time Taken: 0.003000 
+ 

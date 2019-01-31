@@ -7,24 +7,24 @@ FOR %%K IN (2, 5, 10) DO (
     FOR /L %%N IN (100000, 100000, 1000000) DO (
         python ./test/data-gen.py %%K %%N
     )
-    FOR /L %%N IN (10000, 10000, 1000000) DO (
-        ./seq.exe %%K data/%%K-%%N.dat dump/seq-%%K-%%N-points.txt dump/seq-%%K-%%N-means.txt >> results/%%K.txt
+    FOR /L %%N IN (100000, 100000, 1000000) DO (
+        .\seq.exe %%K data/%%K-%%N.dat dump/seq-%%K-%%N-points.txt dump/seq-%%K-%%N-means.txt >> results/%%K.txt
     )
     echo. >> results/%%K.txt
-    FOR /L %%N IN (10000, 10000, 1000000) DO (
-        pthread.exe %%K 2 data/%%K-%%N.dat dump/p2-%%K-%%N-points.txt dump/p2-%%K-%%N-means.txt >> results/%%K.txt
+    FOR /L %%N IN (100000, 100000, 1000000) DO (
+        .\pthread.exe %%K 2 data/%%K-%%N.dat dump/p2-%%K-%%N-points.txt dump/p2-%%K-%%N-means.txt >> results/%%K.txt
     )
     echo. >> results/%%K.txt
-    FOR /L %%N IN (10000, 10000, 1000000) DO (
-        pthread.exe %%K 4 data/%%K-%%N.dat dump/p4-%%K-%%N-points.txt dump/p4-%%K-%%N-means.txt >> results/%%K.txt
+    FOR /L %%N IN (100000, 100000, 1000000) DO (
+        .\pthread.exe %%K 4 data/%%K-%%N.dat dump/p4-%%K-%%N-points.txt dump/p4-%%K-%%N-means.txt >> results/%%K.txt
     )
     echo. >> results/%%K.txt
-    FOR /L %%N IN (10000, 10000, 1000000) DO (
-        omp.exe %%K 2 data/%%K-%%N.dat dump/o2-%%K-%%N-points.txt dump/o2-%%K-%%N-means.txt >> results/%%K.txt
+    FOR /L %%N IN (100000, 100000, 1000000) DO (
+        .\omp.exe %%K 2 data/%%K-%%N.dat dump/o2-%%K-%%N-points.txt dump/o2-%%K-%%N-means.txt >> results/%%K.txt
     )
     echo. >> results/%%K.txt
-    FOR /L %%N IN (10000, 10000, 1000000) DO (
-        omp.exe %%K 4 data/%%K-%%N.dat dump/o4-%%K-%%N-points.txt dump/o4-%%K-%%N-means.txt >> results/%%K.txt
+    FOR /L %%N IN (100000, 100000, 1000000) DO (
+        .\omp.exe %%K 4 data/%%K-%%N.dat dump/o4-%%K-%%N-points.txt dump/o4-%%K-%%N-means.txt >> results/%%K.txt
     )
     echo. >> results/%%K.txt
 )
