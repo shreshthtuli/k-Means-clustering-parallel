@@ -48,7 +48,7 @@ void find_clusters(){
     float min_dist = INT_MAX;
     int cluster_num = 0;
     float dist;
-    #pragma omp parallel for private(min_dist, cluster_num)
+    #pragma omp parallel for private(dist, min_dist, cluster_num)
     for(int i = 0; i < points_size; i++){
         min_dist = INT_MAX;
         for(int j = 0; j < means_size; j++){
