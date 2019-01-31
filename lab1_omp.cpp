@@ -85,23 +85,10 @@ bool update_cluster(int clusterID){
 }
 
 void performance(){
-    double perf = 0;
-    vector<int> indices;
-    for(int i = 0; i < means_size; i++){
-        indices.clear();
-        // Get all points of cluster i
-        for(int j = 0; j < points_size; j++){
-            if(points[4*j+3] == i)
-                indices.push_back(j);
-        }
-        // Find sum of distances for all possible y
-        double sum = 0;
-        for(int x = 0; x < indices.size(); x++){
-            for(int y = x+1; y < indices.size(); y++){
-                sum += distance(points[4*x], points[4*x+1], points[4*x+2], points[4*y], points[4*y+1], points[4*y+2]);
-            }
-        }
-        perf += (sum / (2 * indices.size()));
+    double perf = 0; int j;
+    for(int i = 0; i < points_size; i++){
+        j = points[4*i+3];
+        perf += distance(points[4*i], points[4*i+1], points[4*i+1], means[3*j], means[3*j+1], means[3*j+2]);
     }
     cout << "Performance : " << perf << endl;
 }
@@ -129,7 +116,7 @@ void kmeans_omp(int numThreads, int N, int K, int* data_points, int** data_point
         }
         iterations++;
     }
-    // performance();
+    performance();
     *centroids = all_means.data();
     *data_point_cluster = points;
     *num_iterations = iterations-1;
