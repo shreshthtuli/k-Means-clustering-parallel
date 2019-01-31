@@ -31,7 +31,7 @@ void readData(int* data_points, int N){
 void init_means(int num){
     int index;
     for(int i = 0; i < num; i++){
-        index = rand()%points_size;
+        index = (float(i)/num)*points_size;
         means.push_back(points[4*index]);
         means.push_back(points[4*index+1]);
         means.push_back(points[4*index+2]);
@@ -110,7 +110,7 @@ void kmeans_omp(int numThreads, int N, int K, int* data_points, int** data_point
         find_clusters();
         complete = true;
         all_means.insert(std::end(all_means), means.begin(), means.end());
-        #pragma omp parallel for shared(complete)
+        // #pragma omp parallel for shared(complete)
         for(int j = 0; j < means_size; j++){
             complete = complete && update_cluster(j);
         }

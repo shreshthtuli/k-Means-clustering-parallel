@@ -31,7 +31,7 @@ void readData(int* data_points, int N){
 void init_means(int num){
     int index;
     for(int i = 0; i < num; i++){
-        index = rand()%points_size;
+        index = (float(i)/num)*points_size;
         means.push_back(points[4*index]);
         means.push_back(points[4*index+1]);
         means.push_back(points[4*index+2]);
