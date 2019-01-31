@@ -44,9 +44,10 @@ void init_means(int num){
     }
 }
 
-float distance(int a, int b){
-    return sqrt(pow(points[4*a] - points[4*b], 2) + pow(points[4*a+1] - points[4*b+1], 2) + pow(points[4*a+2] - points[4*b+2], 2)); 
+float distance(int x1, int y1, int z1, int x2, int y2, int z2){
+    return sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2) + pow(z1 - z2, 2)); 
 }
+
 
 
 void* find_clusters(void *tid){
@@ -58,7 +59,7 @@ void* find_clusters(void *tid){
         for(int i = sta[*id]; i < sto[*id]; i++){
             min_dist = INT_MAX;
             for(int j = 0; j < means_size; j++){
-                dist = distance(points[i], means[j]);
+                dist = distance(points[4*i], points[4*i+1], points[4*i+2], means[3*j], means[3*j+1], means[3*j+2]);
                 if(min_dist > dist){
                     min_dist = dist;
                     cluster_num = j;
@@ -87,10 +88,10 @@ bool update_cluster(int clusterID){
     if(num == 0){
         return true;
     }
-    val = (means[4*clusterID] == int(sumx/num)) && (means[4*clusterID+1] == int(sumy/num)) && (means[4*clusterID+2] == int(sumz/num));
-    means[4*clusterID] = sumx / num;
-    means[4*clusterID+1] = sumy / num;
-    means[4*clusterID+2] = sumz / num;
+    val = (means[3*clusterID] == int(sumx/num)) && (means[3*clusterID+1] == int(sumy/num)) && (means[3*clusterID+2] == int(sumz/num));
+    means[3*clusterID] = sumx / num;
+    means[3*clusterID+1] = sumy / num;
+    means[3*clusterID+2] = sumz / num;
     return val;
 }
 
@@ -108,7 +109,7 @@ void performance(){
         double sum = 0;
         for(int x = 0; x < indices.size(); x++){
             for(int y = x+1; y < indices.size(); y++){
-                sum += distance(points[x], points[y]);
+                sum += distance(points[4*x], points[4*x+1], points[4*x+2], points[4*y], points[4*y+1], points[4*y+2]);
             }
         }
         perf += (sum / (2 * indices.size()));
