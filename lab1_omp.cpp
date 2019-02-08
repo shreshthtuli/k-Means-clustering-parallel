@@ -13,8 +13,8 @@
 using namespace std;
 
 int* points;
-vector<int> means;
-vector<int> all_means;
+vector<float> means;
+vector<float> all_means;
 int points_size;
 int means_size;
 
@@ -93,7 +93,7 @@ void performance(){
     cout << "Performance : " << perf << endl;
 }
 
-void kmeans_omp(int numThreads, int N, int K, int* data_points, int** data_point_cluster, int** centroids, int* num_iterations){
+void kmeans_omp(int numThreads, int N, int K, int* data_points, int** data_point_cluster, float** centroids, int* num_iterations){
     
     points = new int[N*4];
     points_size = N;
