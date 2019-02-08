@@ -3,7 +3,6 @@
 
 #include <stdlib.h>
 #include <time.h>
-#include <omp.h>
 
 /*
 	Arguments:
@@ -32,7 +31,7 @@ int main(int argc, char const *argv[])
 	int num_threads;		//no. of threads to be used (input)
 	int* data_points;		//data points (input)
 	int* cluster_points;	//clustered data points (to be computed)
-	int* centroids;			//centroids of each iteration (to be computed)
+	float* centroids;			//centroids of each iteration (to be computed)
 	int num_iterations;    //no of iterations performed by algo (to be computed)
 	//---------------------------------------------------------------------
 
@@ -52,14 +51,14 @@ int main(int argc, char const *argv[])
 	*/
 	dataset_in (argv[3], &N, &data_points);
 
-	start_time = omp_get_wtime();
+	start_time = clock();
 	// /*
 	// 	*****************************************************
 	// 		TODO -- You must implement this function
 	// 	*****************************************************
 	// */
 	kmeans_pthread(num_threads, N, K, data_points, &cluster_points, &centroids, &num_iterations);
-	end_time = omp_get_wtime();
+	end_time = clock();
 
 	// /*
 	// 	-- Pre-defined function --
