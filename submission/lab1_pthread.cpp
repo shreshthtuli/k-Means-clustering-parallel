@@ -13,8 +13,8 @@
 using namespace std;
 
 int* points;
-vector<int> means;
-vector<int> all_means;
+vector<float> means;
+vector<float> all_means;
 int points_size;
 int means_size;
 
@@ -36,7 +36,7 @@ void readData(int* data_points, int N){
 void init_means(int num){
     int index;
     for(int i = 0; i < num; i++){
-        index = rand()%points_size;
+        index = (float(i)/num)*points_size;
         means.push_back(points[4*index]);
         means.push_back(points[4*index+1]);
         means.push_back(points[4*index+2]);
@@ -88,7 +88,7 @@ bool update_cluster(int clusterID){
     if(num == 0){
         return true;
     }
-    val = (means[3*clusterID] == int(sumx/num)) && (means[3*clusterID+1] == int(sumy/num)) && (means[3*clusterID+2] == int(sumz/num));
+    val = (means[3*clusterID] == sumx/num) && (means[3*clusterID+1] == sumy/num) && (means[3*clusterID+2] == sumz/num);
     means[3*clusterID] = sumx / num;
     means[3*clusterID+1] = sumy / num;
     means[3*clusterID+2] = sumz / num;
@@ -96,28 +96,15 @@ bool update_cluster(int clusterID){
 }
 
 void performance(){
-    double perf = 0;
-    vector<int> indices;
-    for(int i = 0; i < means_size; i++){
-        indices.clear();
-        // Get all points of cluster i
-        for(int j = 0; j < points_size; j++){
-            if(points[4*j+3] == i)
-                indices.push_back(j);
-        }
-        // Find sum of distances for all possible y
-        double sum = 0;
-        for(int x = 0; x < indices.size(); x++){
-            for(int y = x+1; y < indices.size(); y++){
-                sum += distance(points[4*x], points[4*x+1], points[4*x+2], points[4*y], points[4*y+1], points[4*y+2]);
-            }
-        }
-        perf += (sum / (2 * indices.size()));
+    double perf = 0; int j;
+    for(int i = 0; i < points_size; i++){
+        j = points[4*i+3];
+        perf += distance(points[4*i], points[4*i+1], points[4*i+1], means[3*j], means[3*j+1], means[3*j+2]);
     }
-    cout << "Performance : " << perf << endl;
+    cerr << "Performance : " << perf << endl;
 }
 
-void kmeans_pthread(int thr, int N, int K, int* data_points, int** data_point_cluster, int** centroids, int* num_iterations){
+void kmeans_pthread(int thr, int N, int K, int* data_points, int** data_point_cluster, float** centroids, int* num_iterations){
     
     points = new int[N*4];
     points_size = N;
@@ -179,7 +166,7 @@ void kmeans_pthread(int thr, int N, int K, int* data_points, int** data_point_cl
     }
 
 
-    // performance();
+    performance();
     *centroids = all_means.data();
     *data_point_cluster = points;
     *num_iterations = iterations-1;
