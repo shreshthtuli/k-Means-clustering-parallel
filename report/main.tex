@@ -162,11 +162,11 @@ The graphs in Figure \ref{fig:time} - \ref{fig:efficiency} show the comparison b
     \item We first observe that all execution times grow linearly with problem size = number of data points.
     \item The execution time also increases as the number of cluster = K increases.
     \item We also see that the speedup in both pThread case is higher for 4 threads $\approx$ 2.5 for k = 2 and $\approx$ 1.7 for two threads for k = 2. As k increases, the speedup also increases.
-    \item Efficiency decreases as number of threads increases which is reasonable from theory as well. With problem size, efficiency remain nearly constant which shows that the implementation is cost optimal. \\
+    \item Efficiency decreases as number of threads increases which is reasonable from theory as well. With problem size, efficiency remain nearly constant. So for fraction f of code be serial: \\
     \begin{align*}
         Efficiency\ &=\ \frac{T_{seq}}{p\ \times\ T_p}\\
-        &= \frac{O(n)}{p \times O(n/p)}\\
-        &= O(1)
+        &= \frac{O(n)}{p \times O(fn + \frac{(1-f)n}{p})}\\
+        &= O(\frac{1}{p})
     \end{align*}
     \item We see that even efficiency increases as k increases.
 \end{itemize}
