@@ -1,4 +1,4 @@
-\documentclass[a4paper, 11pt, margin=1in]{article}
+\documentclass[letter, 11pt, margin=1in]{article}
 \usepackage{comment} % enables the use of multi-line comments (\ifx \fi) 
 \usepackage{fullpage} % changes the margin
 \usepackage{xcolor}
@@ -108,7 +108,10 @@ We now present various implementation details, design decisions and optimization
     \centering
     \includegraphics[width=6.2cm,height=5.5cm]{k2}
     \includegraphics[width=6.2cm,height=5.5cm]{k5}
-    \includegraphics[width=6.2cm,height=5.5cm]{k10}
+    \includegraphics[width=6.2cm,height=5.5cm]{k10}\\
+    \includegraphics[width=6.2cm,height=5.5cm]{tk2}
+    \includegraphics[width=6.2cm,height=5.5cm]{tk5}
+    \includegraphics[width=6.2cm,height=5.5cm]{tk10}
     \caption{Graphs showing time taken by different implementations for different k}
     \label{fig:time}
 \end{figure}
@@ -117,16 +120,22 @@ We now present various implementation details, design decisions and optimization
     \centering
     \includegraphics[width=6.2cm,height=5.5cm]{sk2}
     \includegraphics[width=6.2cm,height=5.5cm]{sk5}
-    \includegraphics[width=6.2cm,height=5.5cm]{sk10}
+    \includegraphics[width=6.2cm,height=5.5cm]{sk10}\\
+    \includegraphics[width=6.2cm,height=5.5cm]{tsk2}
+    \includegraphics[width=6.2cm,height=5.5cm]{tsk5}
+    \includegraphics[width=6.2cm,height=5.5cm]{tsk10}
     \caption{Graphs showing Speedup of different implementations for different k}
     \label{fig:speedup}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
     \centering
     \includegraphics[width=6.2cm,height=5.5cm]{ek2}
     \includegraphics[width=6.2cm,height=5.5cm]{ek5}
-    \includegraphics[width=6.2cm,height=5.5cm]{ek10}
+    \includegraphics[width=6.2cm,height=5.5cm]{ek10}\\
+    \includegraphics[width=6.2cm,height=5.5cm]{tek2}
+    \includegraphics[width=6.2cm,height=5.5cm]{tek5}
+    \includegraphics[width=6.2cm,height=5.5cm]{tek10}
     \caption{Graphs showing Efficiency of different implementations for different k}
     \label{fig:efficiency}
 \end{figure}
