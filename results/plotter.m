@@ -65,7 +65,7 @@ h1 = figure;
 hold on;
 grid on 
 grid minor
-set(h,'Units','Inches');
+set(h1,'Units','Inches');
 % set(gca, 'YScale', 'log')
 % set(gca,'ytick',logspace(0,1,100000)-1);
 plot(x, seq ./ pthread_2, '-o');
@@ -76,8 +76,8 @@ title(strcat("Speedup comparison for k = ", test));
 xlabel("Number of Points")
 ylabel("Speedup")
 legend('pThread - 2', 'pThread - 4', 'omp - 2', 'omp - 4')
-pos = get(h,'Position');
-set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+pos = get(h1,'Position');
+set(h1,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 print(h1,strcat("sk",test),'-dpdf','-r0')
 
 
@@ -85,7 +85,7 @@ h2 = figure;
 hold on;
 grid on 
 grid minor
-set(h,'Units','Inches');
+set(h2,'Units','Inches');
 % set(gca, 'YScale', 'log')
 % set(gca,'ytick',logspace(0,1,100000)-1);
 plot(x, seq ./ (2 * pthread_2), '-o');
@@ -96,6 +96,6 @@ title(strcat("Efficiency comparison for k = ", test));
 xlabel("Number of Points")
 ylabel("Efficiency")
 legend('pThread - 2', 'pThread - 4', 'omp - 2', 'omp - 4')
-pos = get(h,'Position');
-set(h,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
+pos = get(h2,'Position');
+set(h2,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
 print(h2,strcat("ek",test),'-dpdf','-r0')
