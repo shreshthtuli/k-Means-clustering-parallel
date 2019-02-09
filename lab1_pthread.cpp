@@ -88,7 +88,7 @@ bool update_cluster(int clusterID){
     if(num == 0){
         return true;
     }
-    val = (means[3*clusterID] == int(sumx/num)) && (means[3*clusterID+1] == int(sumy/num)) && (means[3*clusterID+2] == int(sumz/num));
+    val = (means[3*clusterID] == sumx/num) && (means[3*clusterID+1] == sumy/num) && (means[3*clusterID+2] == sumz/num);
     means[3*clusterID] = sumx / num;
     means[3*clusterID+1] = sumy / num;
     means[3*clusterID+2] = sumz / num;
@@ -101,7 +101,7 @@ void performance(){
         j = points[4*i+3];
         perf += distance(points[4*i], points[4*i+1], points[4*i+1], means[3*j], means[3*j+1], means[3*j+2]);
     }
-    cout << "Performance : " << perf << endl;
+    cerr << "Performance : " << perf << endl;
 }
 
 void kmeans_pthread(int thr, int N, int K, int* data_points, int** data_point_cluster, float** centroids, int* num_iterations){

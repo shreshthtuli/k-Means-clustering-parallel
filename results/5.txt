@@ -1,16 +1,56 @@
  
-Performance : 6.83356e+07
-Time Taken: 0.006000 
+Time Taken: 0.999678 
+Time Taken: 1.969195 
+Time Taken: 2.990076 
+Time Taken: 3.997567 
+Time Taken: 4.929338 
+Time Taken: 5.812465 
+Time Taken: 6.876978 
+Time Taken: 7.776780 
+Time Taken: 8.843619 
+Time Taken: 9.744081 
+  
+Time Taken: 0.602404 
+Time Taken: 1.130766 
+Time Taken: 1.692590 
+Time Taken: 2.234571 
+Time Taken: 2.806102 
+Time Taken: 3.313235 
+Time Taken: 3.921747 
+Time Taken: 4.447612 
+Time Taken: 5.159978 
+Time Taken: 5.826492 
  
-Performance : 6.83356e+07
-Time Taken: 0.006000 
+Time Taken: 0.331056 
+Time Taken: 0.670056 
+Time Taken: 1.004207 
+Time Taken: 1.345308 
+Time Taken: 1.660767 
+Time Taken: 2.017663 
+Time Taken: 2.331543 
+Time Taken: 2.579780 
+Time Taken: 2.963217 
+Time Taken: 3.279453 
  
-Performance : 6.83356e+07
-Time Taken: 0.005000 
+Time Taken: 0.553860 
+Time Taken: 1.080830 
+Time Taken: 1.596059 
+Time Taken: 2.110108 
+Time Taken: 2.667794 
+Time Taken: 3.176110 
+Time Taken: 3.761242 
+Time Taken: 4.298159 
+Time Taken: 4.790547 
+Time Taken: 5.367558 
  
-Performance : 6.83354e+07
-Time Taken: 0.003000 
- 
-Performance : 6.84491e+07
-Time Taken: 0.000000 
+Time Taken: 0.312329 
+Time Taken: 0.632728 
+Time Taken: 0.931601 
+Time Taken: 1.247190 
+Time Taken: 1.552461 
+Time Taken: 1.836585 
+Time Taken: 2.160282 
+Time Taken: 2.464164 
+Time Taken: 2.773760 
+Time Taken: 3.092067 
  

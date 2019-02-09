@@ -1,1 +1,56 @@
  
+Time Taken: 0.225671 
+Time Taken: 0.450322 
+Time Taken: 0.678121 
+Time Taken: 0.895965 
+Time Taken: 1.191202 
+Time Taken: 1.409644 
+Time Taken: 1.676081 
+Time Taken: 1.772830 
+Time Taken: 2.027145 
+Time Taken: 2.241647 
+  
+Time Taken: 0.133411 
+Time Taken: 0.275526 
+Time Taken: 0.430748 
+Time Taken: 0.554320 
+Time Taken: 0.691910 
+Time Taken: 0.839644 
+Time Taken: 0.997914 
+Time Taken: 1.105394 
+Time Taken: 1.237700 
+Time Taken: 1.404327 
+ 
+Time Taken: 0.094656 
+Time Taken: 0.188406 
+Time Taken: 0.287937 
+Time Taken: 0.397300 
+Time Taken: 0.466947 
+Time Taken: 0.566660 
+Time Taken: 0.650279 
+Time Taken: 0.745753 
+Time Taken: 0.841317 
+Time Taken: 0.938868 
+ 
+Time Taken: 0.135735 
+Time Taken: 0.276078 
+Time Taken: 0.403340 
+Time Taken: 0.550795 
+Time Taken: 0.672272 
+Time Taken: 0.811204 
+Time Taken: 0.936612 
+Time Taken: 1.078601 
+Time Taken: 1.225244 
+Time Taken: 1.349877 
+ 
+Time Taken: 0.088675 
+Time Taken: 0.182010 
+Time Taken: 0.273973 
+Time Taken: 0.358060 
+Time Taken: 0.437325 
+Time Taken: 0.532850 
+Time Taken: 0.616733 
+Time Taken: 0.684505 
+Time Taken: 0.771476 
+Time Taken: 0.886233 
+ 
