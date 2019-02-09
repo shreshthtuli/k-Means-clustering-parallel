@@ -1,10 +1,18 @@
-\documentclass[a4paper, 11pt]{article}
+\documentclass[a4paper, 11pt, margin=1in]{article}
 \usepackage{comment} % enables the use of multi-line comments (\ifx \fi) 
 \usepackage{fullpage} % changes the margin
 \usepackage{xcolor}
 \usepackage{amsmath}
 \usepackage[T1]{fontenc}
 \usepackage{inconsolata}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=10mm,
+ right=10mm,
+ top=20mm,
+ }
 
 \usepackage{color}
 
@@ -51,7 +59,6 @@ The K-Means clustering algorithm partitions an unlabelled set of points into \te
 \begin{enumerate}
     \item pThread based parallelisation where the \textit{cluster update} was parallelised referred as \textbf{pThread}
     \item pThread based parallelisation where both \textit{cluster update} and \textit{means update} were parallelised, referred as \textbf{pThread2}
-    \item pThread based parallelisation where only \textit{cluster update} is parallelised but not all points are updated together to get faster executtion of each iteration, referred as \textbf{pThread2}
     \item OpenMP based parallelisation using compiler directives, referred as \textbf{omp}
 \end{enumerate}
 We refer to the sequential implementation as \textbf{seq}.
@@ -64,7 +71,7 @@ We now present various implementation details, design decisions and optimization
 \begin{itemize}
     \item Each cluster (1 to k) was given a \textit{clusterID} and goal of the algorithm was to provide the best clusterID's to all points
     \item The code was divided into two main functions for updating clusterID's of all points and updating the position of the k means.
-    \item The means were initialized using \textit{Forgy method}
+    \item The means were initialized using a deterministic algorithm of selecting first k points as means.
     \item In a loop both update clusterID and update means' position was called successively. The loop terminated after a specific number of iterations to maintain homogeneity in the execution time across different runs of the code and easier comparison.
 \end{itemize}
 
@@ -86,36 +93,44 @@ We now present various implementation details, design decisions and optimization
     \item Like in the earlier implementation here too the function of updating the clusterIDs has been multi-threaded, but the updating means function too has been multi-threaded.
     \item To prevent too much locking and synchronization in the update mean function, a similar \textit{work\_done2[]} array has been declared.
     \item As the finding clusterIDs and updating means need to be done sequentially as they can not be overlapped, the same threads perform both jobs one after the other.
-    \item Due to high overhead of so much synchronization across threads, we will see later that for small size data this strategy performs really poorly compared to the sequential strategy, but performs fairly well for large sized input data. This is because of the fraction of overhead compared to the computation work reduces as input size increases.
-\end{itemize}
-
-\subsection{pThread3}
-
-\begin{itemize}
-    \item In this implementation of pThread based approach we have implemented a stochastic descent solution where in each iteration rather than computing new clusterIDs of all points we compute for only a fraction of them (around 75\%) randomly sampled from all the points
-    \item Due to this, each iteration becomes much faster and the algorithm converges much sooner.
+    \item Due to high overhead of so much synchronization across threads and k ranging between 2 to 10 which means k << n  for small size data this strategy performs really poorly compared to the \textbf{pThread} implementation.
 \end{itemize}
 
 \subsection{OpenMP}
 
 \begin{itemize}
     \item For the OpenMP implementation we have used the compiler directive of \textit{#pragma omp parallel for}. This has been used in both updating clusterIDs and updating means.
-    \item As we shall see later, due to optimized implementation this works slightly faster that the pThread approach.
+    \item As we shall see later, due to optimized implementation this works slightly faster that the \textbf{pThread} approach.
     \item To prevent over writing of values \textit{shared() and private()} have been used to distinguish between shared and local variables.
 \end{itemize}
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=7.8cm,height=6cm]{k5}
-    \includegraphics[width=7.8cm,height=6cm]{k10} \\
-    \includegraphics[width=7.8cm,height=6cm]{k20}
-    \includegraphics[width=7.8cm,height=6cm]{k50} \\
-    \includegraphics[width=8.5cm,height=6.5cm]{k100}
+    \includegraphics[width=6.2cm,height=5.5cm]{k2}
+    \includegraphics[width=6.2cm,height=5.5cm]{k5}
+    \includegraphics[width=6.2cm,height=5.5cm]{k10}
     \caption{Graphs showing time taken by different implementations for different k}
-    \label{fig:my_label}
+    \label{fig:time}
 \end{figure}
 
-\newpage
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.2cm,height=5.5cm]{sk2}
+    \includegraphics[width=6.2cm,height=5.5cm]{sk5}
+    \includegraphics[width=6.2cm,height=5.5cm]{sk10}
+    \caption{Graphs showing Speedup of different implementations for different k}
+    \label{fig:speedup}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=6.2cm,height=5.5cm]{ek2}
+    \includegraphics[width=6.2cm,height=5.5cm]{ek5}
+    \includegraphics[width=6.2cm,height=5.5cm]{ek10}
+    \caption{Graphs showing Efficiency of different implementations for different k}
+    \label{fig:efficiency}
+\end{figure}
+
 \section{Experiments}
 
 To test the impact and efficiency of parallelisation in all the approaches we performed tests/experiments on the completion time of each implementation.
@@ -132,15 +147,33 @@ The tests were run on the following setup:
 
 \subsection{Observations and results}
 
-The graphs in Figure \ref{fig:my_label} show the comparison between different parallelized implementations. We can conclude the following:
+The graphs in Figure \ref{fig:time} - \ref{fig:efficiency} show the comparison between times of different parallelized implementations. We can conclude the following:
 
 \begin{itemize}
     \item We first observe that all execution times grow linearly with problem size = number of data points.
     \item The execution time also increases as the number of cluster = K increases.
-    \item We lso that the speedup in pThread case is around 1.9 for 2 threads (in light red) and around 3.7 for 4 threads (in yellow). 
-    \item The pThread2 having high thread synchronisation overhead shows poor performance (in green) for small size K and nearly 2 speedup in 4 thread case.
-    \item The OpenMP implementation gives nearly 6 speedup for the 4 thread run (in dark blue).
+    \item We also see that the speedup in both pThread case is higher for 4 threads $\approx$ 2.5 for k = 2 and $\approx$ 1.7 for two threads for k = 2. As k increases, the speedup also increases.
+    \item Efficiency decreases as number of threads increases which is reasonable from theory as well. With problem size, efficiency remain nearly constant which shows that the implementation is cost optimal. \\
+    \begin{align*}
+        Efficiency\ &=\ \frac{T_{seq}}{p\ \times\ T_p}\\
+        &= \frac{O(n)}{p \times O(n/p)}\\
+        &= O(1)
+    \end{align*}
+    \item We see that even efficiency increases as k increases.
 \end{itemize}
+
+\begin{table}[h]
+    \centering
+    \begin{tabular}{|c|c|c|c|}
+    \hline
+        Factor increases & Time & Speedup & Efficiency  \\ \hline \hline
+        Problem size  & $\uparrow$ & = & = \\ \hline
+        k & $\uparrow$ & $\uparrow$ & $\uparrow$ \\ \hline
+        Number of threads & $\downarrow$ & $\uparrow$ & $\downarrow$ \\ \hline
+    \end{tabular}
+    \caption{Summary of observations}
+    \label{tab:my_label}
+\end{table}
 
 
 
