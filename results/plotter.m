@@ -11,7 +11,7 @@ omp_8 = [];
 
 x = [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000];
 
-test = "5";
+test = "10";
 file1 = strcat(test,".txt");
 f1 = fopen(file1, 'rt');
 
@@ -160,7 +160,7 @@ plot(threads, [mean(seq./pthread_2), mean(seq./pthread_4), mean(seq./pthread_6),
 plot(threads, [mean(seq./omp_2), mean(seq./omp_4), mean(seq./omp_6), mean(seq./omp_8)], '-o');
 title(strcat("Speedup comparison for k = ", test));
 xlabel("Number of Threads")
-ylabel("Time in seconds")
+ylabel("Speedup")
 legend('pThread', 'omp')
 pos = get(h4,'Position');
 set(h4,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
@@ -175,7 +175,7 @@ plot(threads, [mean(seq./(2*pthread_2)), mean(seq./(4*pthread_4)), mean(seq./(6*
 plot(threads, [mean(seq./(2*omp_2)), mean(seq./(4*omp_4)), mean(seq./(6*omp_6)), mean(seq./(8*omp_8))], '-o');
 title(strcat("Efficiency comparison for k = ", test));
 xlabel("Number of Threads")
-ylabel("Time in seconds")
+ylabel("Efficiency")
 legend('pThread', 'omp')
 pos = get(h5,'Position');
 set(h5,'PaperPositionMode','Auto','PaperUnits','Inches','PaperSize',[pos(3), pos(4)])
